@@ -1,0 +1,10 @@
+name: SH-Pets
+main: dev.smartshub.shpets.plugin.Main
+version: 1.0.0
+authors:
+  - hhitt, SmartsHub
+description: "Awesome pets for you server"
+api-version: 1.21
+
+softdepend:
+  - PlaceholderAPI

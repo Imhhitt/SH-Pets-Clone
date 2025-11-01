@@ -1,0 +1,267 @@
+name:
+  display: "&c&lFire Dragon"
+  show: true
+
+permission: "pets.fire_dragon"
+
+entity:
+  type: "SHEEP"
+  baby: true
+  # Only for armor-stands
+  show-arms: false
+
+# Available modes: WALK, FLY, TELEPORT_ONLY, NONE
+movement:
+  mode: "WALK"
+  speed: 1.2
+
+# Offsets for pet position relative to player
+distance:
+  x-offset: 1.0
+  y-offset: 2.0
+  z-offset: 1.0
+  teleport: 20.0
+
+# Default glow, can be overridden in actions
+glow:
+  enabled: true
+  color: "RED"
+
+# This only will work if the entity type supports equipment (like armor-stands)
+equipment:
+  helmet: "DRAGON_HEAD"
+  chestplate: "NETHERITE_CHESTPLATE"
+  leggings: "NETHERITE_LEGGINGS"
+  boots: "NETHERITE_BOOTS"
+  hand: "BLAZE_ROD"
+  off-hand: "FIRE_CHARGE"
+  # Support base64 and player-name (can use placeholders from placeholderapi)
+  head-value: ""
+
+on-spawn:
+    # ========== MESSAGES ==========
+  messages:
+    - "<gold><bold>🐲 Your Fire Dragon has awakened!"
+    - "<red>ROOOAAR!"
+    - "<yellow>The dragon stretches its wings"
+
+    # ========== TITLE ==========
+  title:
+    title: "&c&lFIRE DRAGON"
+    subtitle: "&6Has entered the world"
+    fadeIn: 20
+    stay: 60
+    fadeOut: 20
+
+    # ========== SOUND ==========
+  sound:
+    name: "ENTITY_ENDER_DRAGON_GROWL"
+    volume: 1.5
+    pitch: 1.2
+    target: LOCATION # PLAYER o LOCATION
+    probability: 100
+
+    # ========== PARTICLE ==========
+  particle:
+    type: FLAME
+    count: 50
+    offsetX: 1.0
+    offsetY: 1.0
+    offsetZ: 1.0
+    speed: 0.1
+    target: PET # PLAYER, PET, o LOCATION
+    delay: 10
+
+    # ========== GLOW ==========
+  glow:
+    color: RED # Cualquier ChatColor
+    duration: 100 # ticks (5 segundos)
+
+    # ========== EFFECT ==========
+  effect:
+    type: FIRE_RESISTANCE
+    duration: 1200 # ticks (60 segundos)
+    amplifier: 0
+    ambient: false
+    particles: true
+    icon: true
+    probability: 100
+
+    # ========== EXPLOSION ==========
+  explosion:
+    power: 1.5
+    offsetX: 0
+    offsetY: 1
+    offsetZ: 0
+    probability: 30
+    delay: 40
+
+    # ========== CONSOLE COMMANDS ==========
+  console-commands:
+    - "say %pet_name% has spawned for %player%!"
+    - "playsound minecraft:entity.wither.spawn master @a"
+
+    # ========== CONDITIONAL: Heal if low health ==========
+  heal-on-spawn:
+    condition: "%player_health% < 10.0"
+    delay: 20
+    probability: 100
+
+    messages:
+      - "<green>✚ Your dragon heals you with its magical powers!"
+
+    heal:
+      type: ADD # ADD, SET, o MULTIPLY
+      value: 10.0
+
+    particle:
+      type: HEART
+      count: 10
+      offsetX: 0.5
+      offsetY: 0.5
+      offsetZ: 0.5
+      speed: 0.1
+      target: PLAYER
+
+    sound:
+      name: ENTITY_PLAYER_LEVELUP
+      volume: 1.0
+      pitch: 1.5
+      target: PLAYER
+
+  # ========================================
+  # PERIODIC ACTIONS
+  # ========================================
+periodic:
+    # ========== PARTICLE TRAIL ==========
+  flame-trail:
+    condition: "%world_time% > 13000" # Solo de noche
+    delay: 20 # Cada segundo
+    probability: 80
+
+    particle:
+      type: FLAME
+      count: 3
+      offsetX: 0.3
+      offsetY: 0.3
+      offsetZ: 0.3
+      speed: 0.05
+      target: PET
+
+    # ========== LOW HEALTH WARNING ==========
+  health-warning:
+    condition: "%player_health% <= 6.0"
+    delay: 600 # Cada 30 segundos
+    probability: 100
+
+    title:
+      title: "&c&l⚠ LOW HEALTH!"
+      subtitle: "&7Your dragon is worried"
+      fadeIn: 10
+      stay: 40
+      fadeOut: 10
+
+    sound:
+      name: BLOCK_NOTE_BLOCK_PLING
+      volume: 1.0
+      pitch: 0.5
+      target: PLAYER
+
+  # ========================================
+  # INTERACT ACTIONS
+  # ========================================
+on-interact:
+    # ========== NORMAL INTERACT ==========
+  messages:
+    - "<yellow>You pet your dragon!"
+    - "70%:<gold>*purrs like a giant cat*"
+    - "30%:<red>*snorts smoke*"
+
+  sound:
+    name: ENTITY_CAT_PURR
+    volume: 1.0
+    pitch: 0.5
+    target: PLAYER
+
+  particle:
+    type: HEART
+    count: 5
+    offsetX: 0.5
+    offsetY: 1.0
+    offsetZ: 0.5
+    speed: 0.1
+    target: PET
+
+    # ========== SNEAK INTERACT: Special Menu ==========
+  special-menu:
+    condition: "%player_is_sneaking% = true"
+    delay: 100
+
+    title:
+      title: "&6&lDragon Menu"
+      subtitle: "&eOpening special options..."
+      fadeIn: 10
+      stay: 40
+      fadeOut: 10
+
+    console-commands:
+      - "dragonmenu %player_name%"
+
+    sound:
+      name: BLOCK_ENCHANTMENT_TABLE_USE
+      volume: 1.0
+      pitch: 1.0
+      target: PLAYER
+
+    # ========== CONDITIONAL: Feed if hungry ==========
+    feed-dragon:
+      condition: "%player_food% < 10"
+      delay: 600
+      probability: 50
+
+      messages:
+        - "<green>Your dragon shares its energy with you!"
+
+      console-commands:
+        - "effect give %player% saturation 5 0"
+
+      particle:
+        type: VILLAGER_HAPPY
+        count: 15
+        offsetX: 0.5
+        offsetY: 1.0
+        offsetZ: 0.5
+        speed: 0.1
+        target: PLAYER
+
+  # ========================================
+  # HURT ACTIONS
+  # ========================================
+on-hurt:
+    # ========== REVENGE ON ATTACKER ==========
+  revenge:
+    condition: "%damager_type% = PLAYER & %damager_name% != %owner%"
+    probability: 75
+    delay: 100
+
+    messages:
+      - "<dark_red>Your dragon retaliates against %damager_name%!"
+
+    console-commands:
+      - "50%:effect give %damager_name% wither 5 1"
+      - "30%:effect give %damager_name% blindness 3 0"
+
+    particle:
+      type: SMOKE_LARGE
+      count: 30
+      offsetX: 1.0
+      offsetY: 1.0
+      offsetZ: 1.0
+      speed: 0.3
+      target: PET
+
+    sound:
+      name: ENTITY_ENDER_DRAGON_GROWL
+      volume: 2.0
+      pitch: 0.8
+      target: LOCATION

@@ -1,0 +1,145 @@
+package dev.smartshub.shpets.plugin.service.glow;
+
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
+import net.minecraft.world.scores.Team;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.CraftServer;
+import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
+
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+public class GlowEffectService {
+
+    private static final EntityDataAccessor<Byte> DATA_SHARED_FLAGS_ID =
+            new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+    private static final byte GLOWING_FLAG = 0x40;
+
+    private static final Map<NamedTextColor, ChatFormatting> COLOR_MAP = Map.ofEntries(
+            Map.entry(NamedTextColor.BLACK, ChatFormatting.BLACK),
+            Map.entry(NamedTextColor.DARK_BLUE, ChatFormatting.DARK_BLUE),
+            Map.entry(NamedTextColor.DARK_GREEN, ChatFormatting.DARK_GREEN),
+            Map.entry(NamedTextColor.DARK_AQUA, ChatFormatting.DARK_AQUA),
+            Map.entry(NamedTextColor.DARK_RED, ChatFormatting.DARK_RED),
+            Map.entry(NamedTextColor.DARK_PURPLE, ChatFormatting.DARK_PURPLE),
+            Map.entry(NamedTextColor.GOLD, ChatFormatting.GOLD),
+            Map.entry(NamedTextColor.GRAY, ChatFormatting.GRAY),
+            Map.entry(NamedTextColor.DARK_GRAY, ChatFormatting.DARK_GRAY),
+            Map.entry(NamedTextColor.BLUE, ChatFormatting.BLUE),
+            Map.entry(NamedTextColor.GREEN, ChatFormatting.GREEN),
+            Map.entry(NamedTextColor.AQUA, ChatFormatting.AQUA),
+            Map.entry(NamedTextColor.RED, ChatFormatting.RED),
+            Map.entry(NamedTextColor.LIGHT_PURPLE, ChatFormatting.LIGHT_PURPLE),
+            Map.entry(NamedTextColor.YELLOW, ChatFormatting.YELLOW),
+            Map.entry(NamedTextColor.WHITE, ChatFormatting.WHITE)
+    );
+
+    private final Scoreboard scoreboard;
+
+    public GlowEffectService() {
+        this.scoreboard = ((CraftServer) Bukkit.getServer()).getServer().getScoreboard();
+    }
+
+    public void setGlowing(Entity nmsEntity, NamedTextColor color) {
+        if (nmsEntity == null || color == null) {
+            return;
+        }
+
+        String teamName = getTeamName(nmsEntity.getUUID());
+        String entityIdentifier = getEntityIdentifier(nmsEntity);
+
+        updateTeam(teamName, entityIdentifier, convertColor(color));
+        setGlowingFlag(nmsEntity, true);
+        broadcastMetadata(nmsEntity);
+    }
+
+    public void removeGlowing(Entity nmsEntity) {
+        if (nmsEntity == null) return;
+
+        String teamName = getTeamName(nmsEntity.getUUID());
+        String entityIdentifier = getEntityIdentifier(nmsEntity);
+
+        removeTeam(teamName, entityIdentifier);
+        setGlowingFlag(nmsEntity, false);
+        broadcastMetadata(nmsEntity);
+    }
+
+
+    private void updateTeam(String teamName, String entityIdentifier, ChatFormatting color) {
+        PlayerTeam oldTeam = scoreboard.getPlayerTeam(teamName);
+        if (oldTeam != null) {
+            scoreboard.removePlayerTeam(oldTeam);
+        }
+
+        PlayerTeam team = scoreboard.addPlayerTeam(teamName);
+        team.setColor(color);
+        team.setCollisionRule(Team.CollisionRule.NEVER);
+        team.setNameTagVisibility(Team.Visibility.ALWAYS);
+        scoreboard.addPlayerToTeam(entityIdentifier, team);
+    }
+
+    private void removeTeam(String teamName, String entityIdentifier) {
+        PlayerTeam team = scoreboard.getPlayerTeam(teamName);
+        if (team != null) {
+            scoreboard.removePlayerFromTeam(entityIdentifier, team);
+            scoreboard.removePlayerTeam(team);
+        }
+    }
+
+    private void setGlowingFlag(Entity nmsEntity, boolean glowing) {
+        byte flags = nmsEntity.getEntityData().get(DATA_SHARED_FLAGS_ID);
+        flags = glowing ? (byte) (flags | GLOWING_FLAG) : (byte) (flags & ~GLOWING_FLAG);
+        nmsEntity.getEntityData().set(DATA_SHARED_FLAGS_ID, flags);
+    }
+
+    private void broadcastMetadata(Entity nmsEntity) {
+        byte flags = nmsEntity.getEntityData().get(DATA_SHARED_FLAGS_ID);
+        List<SynchedEntityData.DataValue<?>> dataValues = List.of(
+                SynchedEntityData.DataValue.create(DATA_SHARED_FLAGS_ID, flags)
+        );
+
+        ClientboundSetEntityDataPacket packet =
+                new ClientboundSetEntityDataPacket(nmsEntity.getId(), dataValues);
+
+        Bukkit.getOnlinePlayers().stream()
+                .map(this::toNMSPlayer)
+                .forEach(viewer -> viewer.connection.send(packet));
+    }
+
+    private String getTeamName(UUID entityUUID) {
+        return "glow_" + entityUUID;
+    }
+
+    private String getEntityIdentifier(Entity nmsEntity) {
+        return nmsEntity.getUUID().toString();
+    }
+
+    private Entity toNMS(org.bukkit.entity.Entity bukkitEntity) {
+        return ((CraftEntity) bukkitEntity).getHandle();
+    }
+
+    private Entity toNMS(UUID entityUUID) {
+        org.bukkit.entity.Entity bukkitEntity = Bukkit.getEntity(entityUUID);
+        if (bukkitEntity == null) return null;
+        return toNMS(bukkitEntity);
+    }
+
+    private ServerPlayer toNMSPlayer(org.bukkit.entity.Player player) {
+        return ((CraftPlayer) player).getHandle();
+    }
+
+    private ChatFormatting convertColor(NamedTextColor color) {
+        return COLOR_MAP.getOrDefault(color, ChatFormatting.WHITE);
+    }
+}
