@@ -21,8 +21,10 @@ dependencies {
     compileOnly("net.kyori:adventure-api:4.17.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
     compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
-
     compileOnly("me.clip:placeholderapi:2.11.6")
+
+
+    compileOnly(files("../libs/EdTools-API.jar"))
 }
 
 tasks {

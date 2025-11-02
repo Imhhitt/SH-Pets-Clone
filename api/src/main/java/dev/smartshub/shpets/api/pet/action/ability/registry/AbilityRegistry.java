@@ -22,6 +22,7 @@ public class AbilityRegistry {
         register("effect", EffectAbility::fromConfig);
         register("particle", ParticleAbility::fromConfig);
         register("glow", GlowAbility::fromConfig);
+        register("ed-tools-boost", EDToolsBoosAbility::fromConfig);
     }
     
     public static void register(String key, AbilityFactory factory) {
