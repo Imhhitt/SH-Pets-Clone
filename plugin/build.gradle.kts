@@ -25,6 +25,10 @@ dependencies {
 
 
     compileOnly(files("../libs/EdTools-API.jar"))
+    compileOnly(files("../libs/Rival-FRods.jar"))
+    compileOnly(files("../libs/Rival-Hoes.jar"))
+    compileOnly(files("../libs/Rival-Pickaxes.jar"))
+    compileOnly(files("../libs/Rival-Swords.jar"))
 }
 
 tasks {

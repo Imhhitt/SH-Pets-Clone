@@ -9,3 +9,7 @@ api-version: 1.21
 softdepend:
   - PlaceholderAPI
   - EdTools
+  - RivalMobSwords
+  - RivalHarvesterHoes
+  - RivalFishingRods
+  - RivalPickaxes

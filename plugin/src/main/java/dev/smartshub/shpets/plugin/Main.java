@@ -5,12 +5,14 @@ import dev.smartshub.shpets.api.pet.Pet;
 import dev.smartshub.shpets.api.pet.template.PetTemplate;
 import dev.smartshub.shpets.api.registry.PetInstanceRegistry;
 import dev.smartshub.shpets.api.registry.PetTemplateRegistry;
+import dev.smartshub.shpets.api.service.boost.RivalBoostService;
 import dev.smartshub.shpets.plugin.command.PetCommand;
 import dev.smartshub.shpets.plugin.command.handler.exception.ExceptionHandler;
 import dev.smartshub.shpets.plugin.command.handler.parameter.PetParameterType;
 import dev.smartshub.shpets.plugin.listener.PetGlowListener;
 import dev.smartshub.shpets.plugin.listener.PlayerJoinListener;
 import dev.smartshub.shpets.plugin.listener.PlayerQuitListener;
+import dev.smartshub.shpets.plugin.listener.RivalBoostListener;
 import dev.smartshub.shpets.plugin.message.MessageParser;
 import dev.smartshub.shpets.plugin.message.MessageRepository;
 import dev.smartshub.shpets.plugin.packet.PacketHandlerImpl;
@@ -65,7 +67,7 @@ public class Main extends JavaPlugin {
         registerCommands();
         initAPI();
 
-        //demo();
+        demo();
     }
 
     private void initRegistries() {
@@ -81,6 +83,7 @@ public class Main extends JavaPlugin {
     }
 
     private void initializeServices() {
+        RivalBoostService.getInstance().initialize(this);
         petFactory = new PetFactory();
         petService = new PetService(templateRegistry, instanceRegistry, petFactory, messageParser);
         petTemplateLoaderService = new PetTemplateLoaderService(this, petService);
@@ -108,6 +111,7 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerJoinListener(packetHandler), this);
         pm.registerEvents(new PlayerQuitListener(packetHandler), this);
         pm.registerEvents(new PetGlowListener(glowHandlingService), this);
+        pm.registerEvents(new RivalBoostListener(), this);
     }
 
     private void registerCommands() {
@@ -155,6 +159,7 @@ public class Main extends JavaPlugin {
         // Despawn all pets
         instanceRegistry.getAllSpawned().forEach(Pet::despawn);
         instanceRegistry.clear();
+        RivalBoostService.getInstance().shutdown();
     }
 
 }
