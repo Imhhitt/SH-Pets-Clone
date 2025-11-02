@@ -7,5 +7,8 @@ public record EquipmentData(
     String boots,
     String hand,
     String offHand,
-    String headValue
+    String headValue,
+    boolean showArms,
+    boolean playerEquipment,
+    boolean headOverride
 ) {}

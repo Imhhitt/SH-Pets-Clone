@@ -131,15 +131,13 @@ public class PetTemplateLoaderService {
 
         String type = "ZOMBIE";
         boolean baby = false;
-        boolean showArms = false;
 
         if (entitySection != null) {
             type = entitySection.getString("type", "ZOMBIE").toUpperCase();
             baby = entitySection.getBoolean("baby", false);
-            showArms = entitySection.getBoolean("show-arms", false);
         }
 
-        return new EntityData(type, baby, showArms);
+        return new EntityData(type, baby);
     }
 
     // ==================== Appearance Loading ====================
@@ -172,7 +170,8 @@ public class PetTemplateLoaderService {
         ConfigurationSection equipSection = config.getConfigurationSection("equipment");
 
         if (equipSection == null) {
-            return new EquipmentData(null, null, null, null, null, null, null);
+            return new EquipmentData(null, null, null, null, null,
+                    null, null, false, false, false);
         }
 
         return new EquipmentData(
@@ -182,7 +181,10 @@ public class PetTemplateLoaderService {
                 equipSection.getString("boots"),
                 equipSection.getString("hand"),
                 equipSection.getString("off-hand"),
-                equipSection.getString("head-value")
+                equipSection.getString("head-value"),
+                equipSection.getBoolean("show-arms", false),
+                equipSection.getBoolean("player-equipment", false),
+                equipSection.getBoolean("head-override", false)
         );
     }
 
@@ -194,6 +196,9 @@ public class PetTemplateLoaderService {
 
         FollowMode followMode = FollowMode.WALK;
         double speed = 1.0;
+        boolean flexY = false;
+        float flexYAmplitude = 0f;
+        float flexYIncrement = 0f;
 
         if (movementSection != null) {
             String modeStr = movementSection.getString("mode", "WALK").toUpperCase();
@@ -203,6 +208,10 @@ public class PetTemplateLoaderService {
                 plugin.getLogger().warning("Invalid movement mode: " + modeStr + ", using WALK");
             }
             speed = movementSection.getDouble("speed", 1.0);
+            flexY = movementSection.getBoolean("flex-y", false);
+            flexYAmplitude = (float) movementSection.getDouble("flex-y-amplitude", 0f);
+            flexYIncrement = (float) movementSection.getDouble("flex-y-increment", 0.02f);
+
         }
 
         // Distance/Offsets
@@ -223,7 +232,7 @@ public class PetTemplateLoaderService {
         FollowData followData = new FollowData(followMode, teleportDistance,
                 xOffset, yOffset, zOffset);
 
-        return new PetBehavior(followData, speed, true, true);
+        return new PetBehavior(followData, speed, flexY, flexYAmplitude, flexYIncrement, true, true);
     }
 
     // ==================== Actions Loading ====================

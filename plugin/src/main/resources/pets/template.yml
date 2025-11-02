@@ -7,13 +7,18 @@ permission: "pets.fire_dragon"
 entity:
   type: "SHEEP"
   baby: true
-  # Only for armor-stands
-  show-arms: false
 
-# Available modes: WALK, FLY, TELEPORT_ONLY, NONE
+# Available modes: WALK, FLOATING, TELEPORT_ONLY
 movement:
-  mode: "WALK"
+  mode: "FLOATING"
   speed: 1.2
+  # Only for FLOATING mode: should the pet move up and down smoothly?
+  flex-y: true
+  # half amplitude of the up and down movement in blocks (only for FLOATING mode)
+  flex-y-amplitude: 0.35
+  # speed of the up and down movement (only for FLOATING mode)
+  flex-y-increment: 0.02
+
 
 # Offsets for pet position relative to player
 distance:
@@ -35,8 +40,15 @@ equipment:
   boots: "NETHERITE_BOOTS"
   hand: "BLAZE_ROD"
   off-hand: "FIRE_CHARGE"
+  # The following will work if the entity type supports equipment (like armor-stands).
+  # Player equipment will override the equipment section below. It will be taken from the player and gave to pet.
+  player-equipment: true
   # Support base64 and player-name (can use placeholders from placeholderapi)
   head-value: ""
+  # Should the pet's head equip player's head instead of the helmet?
+  head-override: true
+  # Only for armor-stands
+  show-arms: false
 
 on-spawn:
     # ========== MESSAGES ==========

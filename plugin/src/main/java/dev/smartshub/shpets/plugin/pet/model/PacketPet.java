@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -91,8 +92,10 @@ public class PacketPet {
 
         // Armor stands show arms
         if (entity instanceof ArmorStand armorStand) {
-            boolean showArms = petData.getTemplate().entityData().showArms();
+            armorStand.setNoBasePlate(true);
+            boolean showArms = petData.getTemplate().appearance().equipment().showArms();
             armorStand.setShowArms(showArms);
+            armorStand.setSmall(petData.getTemplate().entityData().baby());
         }
 
     }
@@ -187,10 +190,34 @@ public class PacketPet {
             }
         }
 
+        if(!equipment.headOverride()) return;
         if(!equipment.headValue().isEmpty()) {
             var skull = PetsAPI.getInstance().skullService().getCustomSkull(equipment.headValue());
             entity.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(skull));
         }
+
+    }
+
+    public void applyPlayerEquipment() {
+        var equipment = petData.getTemplate().appearance().equipment();
+
+        if(equipment.playerEquipment()) return;
+        if(!(nmsEntity instanceof LivingEntity living)) return;
+
+        var player = petData.getOwner();
+
+        living.setItemSlot(EquipmentSlot.MAINHAND, CraftItemStack.asNMSCopy(player.getInventory().getItemInMainHand()));
+        living.setItemSlot(EquipmentSlot.OFFHAND, CraftItemStack.asNMSCopy(player.getInventory().getItemInOffHand()));
+        living.setItemSlot(EquipmentSlot.CHEST, CraftItemStack.asNMSCopy(player.getInventory().getChestplate()));
+        living.setItemSlot(EquipmentSlot.LEGS, CraftItemStack.asNMSCopy(player.getInventory().getLeggings()));
+        living.setItemSlot(EquipmentSlot.FEET, CraftItemStack.asNMSCopy(player.getInventory().getBoots()));
+
+        if(equipment.headOverride()) {
+            living.setItemSlot(EquipmentSlot.HEAD, CraftItemStack.asNMSCopy(player.getInventory().getHelmet()));
+        }
+
+        updateEquipment();
+
     }
 
     /**
