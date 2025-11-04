@@ -1,8 +1,7 @@
-package dev.smartshub.shpets.api.pet.action.ability.impl;
+package dev.smartshub.shpets.api.pet.action.ability.impl.basic;
 
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.action.ability.PetAbility;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;

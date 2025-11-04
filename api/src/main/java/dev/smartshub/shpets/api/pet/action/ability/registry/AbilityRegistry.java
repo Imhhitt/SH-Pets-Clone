@@ -1,8 +1,8 @@
 package dev.smartshub.shpets.api.pet.action.ability.registry;
 
 import dev.smartshub.shpets.api.pet.action.ability.Ability;
-import dev.smartshub.shpets.api.pet.action.ability.impl.ParticleAbility;
-import dev.smartshub.shpets.api.pet.action.ability.impl.*;
+import dev.smartshub.shpets.api.pet.action.ability.impl.basic.*;
+import dev.smartshub.shpets.api.pet.action.ability.impl.hook.EDToolsBoosAbility;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.HashMap;

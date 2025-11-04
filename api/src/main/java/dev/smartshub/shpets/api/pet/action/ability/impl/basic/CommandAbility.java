@@ -1,4 +1,4 @@
-package dev.smartshub.shpets.api.pet.action.ability.impl;
+package dev.smartshub.shpets.api.pet.action.ability.impl.basic;
 
 import dev.smartshub.shpets.api.math.Probability;
 import dev.smartshub.shpets.api.pet.PetData;

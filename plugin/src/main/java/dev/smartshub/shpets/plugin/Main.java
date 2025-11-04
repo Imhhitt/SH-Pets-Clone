@@ -122,7 +122,7 @@ public class Main extends JavaPlugin {
                 .exceptionHandler(exceptionHandler)
                 .build();
 
-        lamp.register(new PetCommand(petService));
+        lamp.register(new PetCommand(petService, this));
     }
 
     private void initAPI() {
