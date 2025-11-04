@@ -1,4 +1,4 @@
-package dev.smartshub.shpets.api.pet.action.ability.impl;
+package dev.smartshub.shpets.api.pet.action.ability.impl.hook;
 
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.action.ability.PetAbility;

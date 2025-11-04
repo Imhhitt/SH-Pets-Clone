@@ -1,14 +1,11 @@
 package dev.smartshub.shpets.plugin.listener;
 
-import dev.smartshub.shpets.api.pet.action.ability.impl.RivalBoostAbility;
+import dev.smartshub.shpets.api.pet.action.ability.impl.hook.RivalBoostAbility;
 import dev.smartshub.shpets.api.service.boost.RivalBoostService;
 import me.rivaldev.fishingrod.rivalfishingrods.api.RodMoneyReceiveEvent;
 import me.rivaldev.harvesterhoes.api.events.HoeEssenceReceivePreEnchantEvent;
-import me.rivaldev.harvesterhoes.api.events.HoeMoneyReceiveEnchant;
 import me.rivaldev.mobsword.rivalmobswords.api.SwordMoneyReceiveEvent;
 import me.rivaldev.pickaxes.api.events.PickaxeEssenceReceiveEnchantEvent;
-import me.rivaldev.pickaxes.api.events.PickaxeEssenceReceivePreEnchantEvent;
-import me.rivaldev.pickaxes.api.events.PickaxeMoneyReceiveEnchant;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

@@ -1,6 +1,6 @@
 package dev.smartshub.shpets.api.service.boost;
 
-import dev.smartshub.shpets.api.pet.action.ability.impl.RivalBoostAbility.RivalBoostType;
+import dev.smartshub.shpets.api.pet.action.ability.impl.hook.RivalBoostAbility.RivalBoostType;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
