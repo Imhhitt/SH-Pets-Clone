@@ -44,4 +44,11 @@ public record PetsAPI(
         }
         instance.taskScheduler.runSync(runnable, delay, period);
     }
+
+    public static void runSync(Runnable runnable, long delay) {
+        if (instance == null || instance.taskScheduler == null) {
+            throw new IllegalStateException("PetsAPI not initialized");
+        }
+        instance.taskScheduler.runSyncLater(runnable, delay);
+    }
 }
