@@ -20,6 +20,7 @@ import dev.smartshub.shpets.plugin.pet.factory.PetFactory;
 import dev.smartshub.shpets.plugin.pet.registry.NMSEntityRegistry;
 import dev.smartshub.shpets.plugin.service.particle.ParticleHandlingService;
 import dev.smartshub.shpets.plugin.service.placeholder.PlaceholderHandlingService;
+import dev.smartshub.shpets.plugin.service.scheduler.PaperTaskScheduler;
 import dev.smartshub.shpets.plugin.service.skull.SkullHandlingService;
 import dev.smartshub.shpets.plugin.service.config.ConfigService;
 import dev.smartshub.shpets.plugin.service.glow.GlowEffectService;
@@ -34,6 +35,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.bukkit.BukkitLamp;
 
 public class Main extends JavaPlugin {
+
+    private static Main instance;
 
     private PetTemplateRegistry templateRegistry;
     private PetInstanceRegistry instanceRegistry;
@@ -57,6 +60,8 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+
         initRegistries();
         setUpConfig();
         initializeServices();
@@ -131,6 +136,7 @@ public class Main extends JavaPlugin {
                 new SkullHandlingService(this),
                 new GlowHandlingService(this, glowEffectService),
                 new ParticleHandlingService(),
+                new PaperTaskScheduler(this),
                 templateRegistry,
                 instanceRegistry,
                 nmsEntityRegistry
@@ -153,13 +159,24 @@ public class Main extends JavaPlugin {
         }, 72000L);
     }
 
-
     @Override
     public void onDisable() {
         // Despawn all pets
         instanceRegistry.getAllSpawned().forEach(Pet::despawn);
         instanceRegistry.clear();
         RivalBoostService.getInstance().shutdown();
+    }
+
+    public static Main getInstance() {
+        return instance;
+    }
+
+    public static void runAsync(Runnable runnable, long delay, long period) {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getInstance(), runnable, delay, period);
+    }
+
+    public static void runSync(Runnable runnable, long delay, long period) {
+        Bukkit.getScheduler().runTaskTimer(Main.getInstance(), runnable, delay, period);
     }
 
 }

@@ -6,6 +6,7 @@ import dev.smartshub.shpets.api.pet.Pet;
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.PetState;
 import dev.smartshub.shpets.api.pet.action.trigger.TriggerType;
+import dev.smartshub.shpets.api.pet.behavior.MovementState;
 import dev.smartshub.shpets.plugin.message.MessageParser;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class BehavioralPet implements Pet {
     private final PacketPet packetPet;
     private final PetData data;
     private final PetBehaviorHandler behaviorHandler;
+    private MovementState movementState = MovementState.FOLLOWING;
     private final PetEventDispatcher eventDispatcher = new PetEventDispatcher();
 
     private long lastPeriodicExecution = 0;
@@ -71,8 +73,10 @@ public class BehavioralPet implements Pet {
             return;
         }
 
-        // Update pet behavior based on configuration
-        behaviorHandler.tick(packetPet, owner);
+        if (movementState == MovementState.FOLLOWING) {
+            behaviorHandler.tick(packetPet, owner);
+        }
+
         PetsAPI.getInstance().glowService().refreshGlowing(packetPet.getNmsEntity());
     }
 
@@ -137,4 +141,13 @@ public class BehavioralPet implements Pet {
     public PacketPet getPacketPet() {
         return packetPet;
     }
+
+    public MovementState getMovementState() {
+        return movementState;
+    }
+
+    public void setMovementState(MovementState state) {
+        this.movementState = state;
+    }
+
 }

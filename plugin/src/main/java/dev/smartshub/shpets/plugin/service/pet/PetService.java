@@ -9,7 +9,6 @@ import dev.smartshub.shpets.api.registry.PetInstanceRegistry;
 import dev.smartshub.shpets.api.registry.PetTemplateRegistry;
 import dev.smartshub.shpets.plugin.message.MessageParser;
 import dev.smartshub.shpets.plugin.pet.factory.PetFactory;
-import dev.smartshub.shpets.plugin.pet.registry.NMSEntityRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
