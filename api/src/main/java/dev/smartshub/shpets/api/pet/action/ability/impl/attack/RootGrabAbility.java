@@ -1,7 +1,9 @@
 package dev.smartshub.shpets.api.pet.action.ability.impl.attack;
 
+import dev.smartshub.shpets.api.PetsAPI;
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.action.ability.PetAbility;
+import dev.smartshub.shpets.api.pet.action.ability.path.PathTracker;
 import dev.smartshub.shpets.api.service.context.PetContextService;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,18 +28,38 @@ public class RootGrabAbility extends PetAbility {
 
     @Override
     protected void executeAbility(Player player, PetData petData) {
+        var petLocation = PetContextService.getPetLocation(petData.getUniqueId());
         var entity = Bukkit.getEntity(PetContextService.getPetTarget(petData.getUniqueId()));
 
-        if(!(entity instanceof LivingEntity target)) {
+        if (petLocation == null || !(entity instanceof LivingEntity target)) {
             return;
         }
 
-        Location loc = target.getLocation();
-        loc.getWorld().spawnParticle(particle, loc, 15, 0.3, 0.3, 0.3, 0);
-        loc.getWorld().playSound(loc, sound, 1f, 1f);
+        petLocation.getWorld().playSound(petLocation, sound, 0.8f, 0.8f);
 
-        target.damage(damage);
-        target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, slowTicks, 3));
+        PathTracker tracker = PathTracker.createDynamicProjectileTracker(
+                petLocation,
+                target::getLocation
+        );
+
+        PetsAPI.getInstance().taskScheduler().runSyncRepeating(() -> {
+            if (!tracker.tick()) {
+                return false;
+            }
+
+            Location current = tracker.getCurrentLocation();
+            current.getWorld().spawnParticle(particle, current, 5, 0.12, 0.12, 0.12, 0.02);
+            current.getWorld().spawnParticle(Particle.BLOCK_CRACK, current, 3, 0.12, 0.12, 0.12, 0.01, Material.DIRT.createBlockData());
+
+            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+                current.getWorld().playSound(current, sound, 1f, 1f);
+                current.getWorld().spawnParticle(Particle.BLOCK_CRACK, current, 20, 0.4, 0.1, 0.4, 0.05, Material.OAK_LEAVES.createBlockData());
+                target.damage(damage);
+                target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, slowTicks, 3));
+            }
+
+            return true;
+        }, 0L, 1L);
     }
 
     public static RootGrabAbility fromConfig(ConfigurationSection section) {

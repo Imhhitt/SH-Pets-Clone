@@ -1,14 +1,14 @@
 package dev.smartshub.shpets.api.pet.action.ability.impl.attack;
 
+import dev.smartshub.shpets.api.PetsAPI;
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.action.ability.PetAbility;
+import dev.smartshub.shpets.api.pet.action.ability.path.PathTracker;
 import dev.smartshub.shpets.api.service.context.PetContextService;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class SpinAttackAbility extends PetAbility {
 
@@ -29,19 +29,45 @@ public class SpinAttackAbility extends PetAbility {
         var petLocation = PetContextService.getPetLocation(petData.getUniqueId());
         var entity = Bukkit.getEntity(PetContextService.getPetTarget(petData.getUniqueId()));
 
-        if(!(entity instanceof LivingEntity target)) {
+        if (petLocation == null || !(entity instanceof LivingEntity target)) {
             return;
         }
 
-        petLocation.getWorld().spawnParticle(particle, petLocation, 50, 0.5, 0.5, 0.5, 0.1);
-        petLocation.getWorld().playSound(petLocation, sound, 1f, 1f);
+        petLocation.getWorld().playSound(petLocation, sound, 1f, 1.2f);
 
-        //TODO: Implement spin attack
+        PathTracker tracker = PathTracker.createDynamicMeleeTracker(
+                petLocation,
+                target::getLocation,
+                petLocation.clone()
+        );
+
+        PetsAPI.getInstance().taskScheduler().runSyncRepeating(() -> {
+            if (!tracker.tick()) {
+                return false;
+            }
+
+            Location current = tracker.getCurrentLocation();
+            // Spin arc visuals around current point
+            current.getWorld().spawnParticle(Particle.SWEEP_ATTACK, current, 1, 0, 0, 0, 0);
+            current.getWorld().spawnParticle(particle, current, 6, 0.3, 0.15, 0.3, 0.02);
+
+            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+                current.getWorld().playSound(current, sound, 1f, 1f);
+                // Damage target and optionally nearby enemies within radius
+                for (var entityNearby : current.getWorld().getNearbyEntities(current, radius, radius / 2, radius)) {
+                    if (entityNearby instanceof LivingEntity living) {
+                        living.damage(damage);
+                    }
+                }
+            }
+
+            return true;
+        }, 0L, 1L);
     }
 
     public static SpinAttackAbility fromConfig(ConfigurationSection section) {
         double damage = section.getDouble("damage", 4.0);
-        double radius = section.getDouble("radius", 5.0);
+        double radius = section.getDouble("radius", 3.0);
         Particle particle = Particle.valueOf(section.getString("particle", "SWEEP_ATTACK"));
         Sound sound = Sound.valueOf(section.getString("sound", "ENTITY_PLAYER_ATTACK_SWEEP"));
         return new SpinAttackAbility(damage, radius, particle, sound);

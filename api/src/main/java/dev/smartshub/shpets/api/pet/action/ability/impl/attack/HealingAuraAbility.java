@@ -27,10 +27,17 @@ public class HealingAuraAbility extends PetAbility {
         var petLocation = PetContextService.getPetLocation(petData.getUniqueId());
         if (petLocation == null) return;
 
-        petLocation.getWorld().spawnParticle(particle, petLocation, 60, 1, 0.5, 1, 0.05);
-        petLocation.getWorld().playSound(petLocation, sound, 1f, 1f);
+        World world = petLocation.getWorld();
+        world.spawnParticle(particle, petLocation, 40, 0.8, 0.4, 0.8, 0.03);
+        world.playSound(petLocation, sound, 1f, 1.2f);
 
-        //TODO: Implement healing nearby allies
+        for (var nearby : world.getNearbyEntities(petLocation, radius, radius / 2, radius)) {
+            if (nearby instanceof Player p) {
+                double newHealth = Math.min(p.getHealth() + healAmount, p.getMaxHealth());
+                p.setHealth(newHealth);
+                world.spawnParticle(Particle.HEART, p.getLocation().add(0, 1, 0), 5, 0.3, 0.3, 0.3, 0.02);
+            }
+        }
     }
 
     public static HealingAuraAbility fromConfig(ConfigurationSection section) {

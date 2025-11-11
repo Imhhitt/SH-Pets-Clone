@@ -1,7 +1,9 @@
 package dev.smartshub.shpets.api.pet.action.ability.impl.attack;
 
+import dev.smartshub.shpets.api.PetsAPI;
 import dev.smartshub.shpets.api.pet.PetData;
 import dev.smartshub.shpets.api.pet.action.ability.PetAbility;
+import dev.smartshub.shpets.api.pet.action.ability.path.PathTracker;
 import dev.smartshub.shpets.api.service.context.PetContextService;
 import org.bukkit.*;
 import org.bukkit.configuration.ConfigurationSection;
@@ -26,16 +28,34 @@ public class WindBlastAbility extends PetAbility {
         var petLocation = PetContextService.getPetLocation(petData.getUniqueId());
         var entity = Bukkit.getEntity(PetContextService.getPetTarget(petData.getUniqueId()));
 
-        if(!(entity instanceof LivingEntity target)) {
+        if (petLocation == null || !(entity instanceof LivingEntity target)) {
             return;
         }
 
-        Location loc = target.getLocation();
-        loc.getWorld().spawnParticle(particle, loc, 20, 0.4, 0.4, 0.4, 0);
-        loc.getWorld().playSound(loc, sound, 1f, 1.3f);
+        petLocation.getWorld().playSound(petLocation, sound, 0.8f, 1.3f);
 
-        Vector push = loc.toVector().subtract(petLocation.toVector()).normalize().multiply(knockback);
-        target.setVelocity(push);
+        PathTracker tracker = PathTracker.createDynamicProjectileTracker(
+                petLocation,
+                target::getLocation
+        );
+
+        PetsAPI.getInstance().taskScheduler().runSyncRepeating(() -> {
+            if (!tracker.tick()) {
+                return false;
+            }
+
+            Location current = tracker.getCurrentLocation();
+            current.getWorld().spawnParticle(Particle.CLOUD, current, 6, 0.15, 0.15, 0.15, 0.02);
+            current.getWorld().spawnParticle(particle, current, 3, 0.12, 0.12, 0.12, 0.01);
+
+            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+                Vector push = target.getLocation().toVector().subtract(petLocation.toVector()).normalize().multiply(knockback);
+                target.setVelocity(push);
+                current.getWorld().playSound(current, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.8f, 1.6f);
+            }
+
+            return true;
+        }, 0L, 1L);
     }
 
     public static WindBlastAbility fromConfig(ConfigurationSection section) {
