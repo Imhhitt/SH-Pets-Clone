@@ -48,10 +48,20 @@ public class WindBlastAbility extends PetAbility {
             current.getWorld().spawnParticle(Particle.CLOUD, current, 6, 0.15, 0.15, 0.15, 0.02);
             current.getWorld().spawnParticle(particle, current, 3, 0.12, 0.12, 0.12, 0.01);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 Vector push = target.getLocation().toVector().subtract(petLocation.toVector()).normalize().multiply(knockback);
                 target.setVelocity(push);
                 current.getWorld().playSound(current, Sound.ENTITY_PLAYER_ATTACK_SWEEP, 0.8f, 1.6f);
+                tracker.forceComplete();
             }
 
             return true;

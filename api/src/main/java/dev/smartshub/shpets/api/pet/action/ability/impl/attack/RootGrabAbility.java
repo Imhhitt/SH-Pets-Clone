@@ -51,11 +51,21 @@ public class RootGrabAbility extends PetAbility {
             current.getWorld().spawnParticle(particle, current, 5, 0.12, 0.12, 0.12, 0.02);
             current.getWorld().spawnParticle(Particle.BLOCK_CRACK, current, 3, 0.12, 0.12, 0.12, 0.01, Material.DIRT.createBlockData());
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 current.getWorld().playSound(current, sound, 1f, 1f);
                 current.getWorld().spawnParticle(Particle.BLOCK_CRACK, current, 20, 0.4, 0.1, 0.4, 0.05, Material.OAK_LEAVES.createBlockData());
                 target.damage(damage);
                 target.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, slowTicks, 3));
+                tracker.forceComplete();
             }
 
             return true;

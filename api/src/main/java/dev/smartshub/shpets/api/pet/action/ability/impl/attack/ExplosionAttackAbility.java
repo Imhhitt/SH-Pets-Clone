@@ -46,11 +46,21 @@ public class ExplosionAttackAbility extends PetAbility {
             current.getWorld().spawnParticle(Particle.SMOKE_NORMAL, current, 3, 0.2, 0.2, 0.2, 0.01);
             current.getWorld().spawnParticle(particle, current, 1, 0, 0, 0, 0);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 World w = current.getWorld();
                 w.spawnParticle(Particle.EXPLOSION_NORMAL, current, 1);
                 w.playSound(current, sound, 1f, 1f);
                 w.createExplosion(current, (float) power, false, false);
+                tracker.forceComplete();
             }
 
             return true;

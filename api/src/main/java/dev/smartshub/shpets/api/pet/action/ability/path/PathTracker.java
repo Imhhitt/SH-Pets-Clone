@@ -5,7 +5,7 @@ import org.bukkit.util.Vector;
 
 public class PathTracker {
 
-    public static double STEP_SIZE = 0.15;
+    public static double STEP_SIZE = 0.25;
     public static double REACH_THRESHOLD = 0.3;
 
     private final Location startLocation;
@@ -17,11 +17,12 @@ public class PathTracker {
     private boolean completed;
     
     private int tickCount;
+    private boolean hitThisTick;
 
 
     public PathTracker(Location startLocation, TargetProvider targetProvider, Location returnLocation) {
         this.startLocation = startLocation.clone();
-        this.returnLocation = returnLocation.clone();
+        this.returnLocation = (returnLocation != null) ? returnLocation.clone() : null;
         this.targetProvider = targetProvider;
         this.currentPosition = startLocation.toVector();
         this.currentPhase = PathPhase.GOING_TO_TARGET;
@@ -39,6 +40,9 @@ public class PathTracker {
         if (completed) {
             return false;
         }
+
+        // reset per-tick hit flag
+        hitThisTick = false;
 
         tickCount++;
 
@@ -72,6 +76,8 @@ public class PathTracker {
         double distance = direction.length();
 
         if (distance <= REACH_THRESHOLD) {
+            // Mark a hit this tick
+            hitThisTick = true;
             onTargetReached();
             
             if (returnLocation != null) {
@@ -142,6 +148,18 @@ public class PathTracker {
         }
         
         return target.toVector().subtract(currentPosition).normalize();
+    }
+
+    /**
+     * Returns true exactly on the tick when the tracker reached the target.
+     * Calling this method consumes the flag for this tick.
+     */
+    public boolean consumeHit() {
+        if (hitThisTick) {
+            hitThisTick = false;
+            return true;
+        }
+        return false;
     }
 
     public double getDistanceToCurrentTarget() {

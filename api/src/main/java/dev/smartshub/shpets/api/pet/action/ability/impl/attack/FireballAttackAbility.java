@@ -51,16 +51,24 @@ public class FireballAttackAbility extends PetAbility {
             current.getWorld().spawnParticle(Particle.SMOKE_NORMAL, current, 2, 0.1, 0.1, 0.1, 0.01);
             current.getWorld().spawnParticle(particle, current, 3, 0.15, 0.15, 0.15, 0.03);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING &&
-                    tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                // Fallback proximity hit check for moving/offset targets (e.g., sheep head bobbing)
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) { // within 0.6 blocks
+                        didHit = true;
+                    }
+                }
+            }
 
+            if (didHit) {
                 current.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, current, 1);
                 current.getWorld().spawnParticle(Particle.FLAME, current, 30, 0.5, 0.5, 0.5, 0.1);
                 current.getWorld().playSound(current, Sound.ENTITY_GENERIC_EXPLODE, 0.8f, 1.2f);
 
                 target.damage(damage);
-
                 target.setFireTicks(60);
+                tracker.forceComplete();
             }
 
             return true;

@@ -45,10 +45,19 @@ public class CrystalShardAbility extends PetAbility {
             Location current = tracker.getCurrentLocation();
             current.getWorld().spawnParticle(particle, current, 3, 0.05, 0.05, 0.05, 0.02);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING &&
-                    tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 target.damage(damage);
                 current.getWorld().playSound(current, Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 1);
+                tracker.forceComplete();
             }
 
             return true;

@@ -45,11 +45,20 @@ public class FireBlastAbility extends PetAbility {
             Location current = tracker.getCurrentLocation();
             current.getWorld().spawnParticle(particle, current, 4, 0.1, 0.1, 0.1, 0.05);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING &&
-                    tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 target.damage(damage);
                 target.setFireTicks(80);
                 current.getWorld().playSound(current, Sound.ITEM_FIRECHARGE_USE, 1, 1);
+                tracker.forceComplete();
             }
 
             return true;

@@ -50,8 +50,16 @@ public class SlashAttackAbility extends PetAbility {
             current.getWorld().spawnParticle(particle, current, 4, 0.2, 0.2, 0.2, 0);
             current.getWorld().playSound(current, sound, 1f, 1f);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING &&
-                    tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 target.damage(damage);
             }
 

@@ -51,7 +51,16 @@ public class IceBeamAttackAbility extends PetAbility {
             current.getWorld().spawnParticle(Particle.SNOWFLAKE, current, 4, 0.1, 0.1, 0.1, 0.02);
             current.getWorld().spawnParticle(particle, current, 2, 0.1, 0.1, 0.1, 0.01);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 current.getWorld().playSound(current, Sound.BLOCK_GLASS_BREAK, 1f, 1.4f);
                 current.getWorld().spawnParticle(Particle.SNOWBALL, current, 10, 0.3, 0.3, 0.3, 0.05);
                 target.damage(damage);
@@ -65,6 +74,7 @@ public class IceBeamAttackAbility extends PetAbility {
                     owner.getWorld().spawnParticle(Particle.HEART, owner.getLocation().add(0, 1, 0), 5, 0.3, 0.3, 0.3, 0.02);
                     owner.playSound(owner.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.8f, 1.6f);
                 }
+                tracker.forceComplete();
             }
 
             return true;

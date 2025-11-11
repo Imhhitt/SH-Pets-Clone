@@ -51,7 +51,16 @@ public class SpinAttackAbility extends PetAbility {
             current.getWorld().spawnParticle(Particle.SWEEP_ATTACK, current, 1, 0, 0, 0, 0);
             current.getWorld().spawnParticle(particle, current, 6, 0.3, 0.15, 0.3, 0.02);
 
-            if (tracker.getCurrentPhase() == PathTracker.PathPhase.RETURNING && tracker.getTickCount() == 1) {
+            boolean didHit = tracker.consumeHit();
+            if (!didHit) {
+                if (current.getWorld() == target.getWorld()) {
+                    if (current.distanceSquared(target.getLocation()) <= 0.36) {
+                        didHit = true;
+                    }
+                }
+            }
+
+            if (didHit) {
                 current.getWorld().playSound(current, sound, 1f, 1f);
                 // Damage target and optionally nearby enemies within radius
                 for (var entityNearby : current.getWorld().getNearbyEntities(current, radius, radius / 2, radius)) {
