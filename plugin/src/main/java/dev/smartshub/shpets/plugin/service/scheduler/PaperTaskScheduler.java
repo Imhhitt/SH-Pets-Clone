@@ -52,8 +52,8 @@ public class PaperTaskScheduler implements TaskScheduler {
                                 e.printStackTrace();
                             }
                         },
-                        delay,
-                        period
+                        Math.max(1L, delay),
+                        Math.max(1L, period)
                 );
 
         activeTasks.add(task);
@@ -121,8 +121,8 @@ public class PaperTaskScheduler implements TaskScheduler {
                                 activeTasks.remove(st);
                             }
                         },
-                        delay,
-                        period
+                        Math.max(1L, delay),
+                        Math.max(1L, period)
                 );
 
         activeTasks.add(scheduledTask);
