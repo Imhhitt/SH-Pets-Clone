@@ -50,14 +50,21 @@ public class PacketHandlerImpl implements PacketHandler {
         };
 
         ChannelPipeline pipeline = ((CraftPlayer) player).getHandle().connection.connection.channel.pipeline();
-        pipeline.addBefore("packet_handler", player.getName(), channelHandler);
+        String handlerName = "shpets-" + player.getUniqueId();
+        if (pipeline.get(handlerName) != null) {
+            pipeline.remove(handlerName);
+        }
+        pipeline.addBefore("packet_handler", handlerName, channelHandler);
     }
 
     @Override
     public void stop (Player player){
         Channel channel = ((CraftPlayer) player).getHandle().connection.connection.channel;
+        String handlerName = "shpets-" + player.getUniqueId();
         channel.eventLoop().submit(() -> {
-            channel.pipeline().remove(player.getName());
+            if (channel.pipeline().get(handlerName) != null) {
+                channel.pipeline().remove(handlerName);
+            }
             return null;
         });
     }
