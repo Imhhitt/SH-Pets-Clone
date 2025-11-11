@@ -1,5 +1,6 @@
 package dev.smartshub.shpets.plugin.packet;
 
+import dev.smartshub.shpets.api.PetsAPI;
 import dev.smartshub.shpets.api.packet.PacketHandler;
 import dev.smartshub.shpets.plugin.service.pet.PetService;
 import io.netty.channel.Channel;
@@ -28,17 +29,20 @@ public class PacketHandlerImpl implements PacketHandler {
             public void channelRead(ChannelHandlerContext ctx, Object rawPacket) throws Exception {
 
                 if (rawPacket instanceof ServerboundInteractPacket packet) {
-                    int entityId = packet.getEntityId();
 
-                    var playerHandle = ((CraftPlayer) player).getHandle();
-                    var world = playerHandle.level();
+                    PetsAPI.runSync(() -> {
+                        int entityId = packet.getEntityId();
 
-                    var nmsEntity = world.getEntity(entityId);
-                    if (nmsEntity == null) return;
+                        var playerHandle = ((CraftPlayer) player).getHandle();
+                        var world = playerHandle.level();
 
-                    var bukkitEntity = nmsEntity.getBukkitEntity();
+                        var nmsEntity = world.getEntity(entityId);
+                        if (nmsEntity == null) return;
 
-                    petService.performInteraction(bukkitEntity.getUniqueId(), player.getUniqueId());
+                        var bukkitEntity = nmsEntity.getBukkitEntity();
+
+                        petService.performInteraction(bukkitEntity.getUniqueId(), player.getUniqueId());
+                    }, 0L);
                 }
 
                 super.channelRead(ctx, rawPacket);
