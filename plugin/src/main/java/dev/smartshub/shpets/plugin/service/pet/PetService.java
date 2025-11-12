@@ -84,6 +84,13 @@ public class PetService {
                 .collect(Collectors.toList());
     }
 
+    public void performOnHurt(UUID owner) {
+        List<Pet> pets = getPetsByOwner(owner);
+        for (Pet pet : pets) {
+            pet.getData().getTemplate().actions().get(TriggerType.ON_HURT).execute(pet.getData(), pet.getData().getOwner());
+        }
+    }
+
     /**
      * Checks if a template exists
      */
