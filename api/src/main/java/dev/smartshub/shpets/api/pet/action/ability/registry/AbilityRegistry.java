@@ -1,6 +1,7 @@
 package dev.smartshub.shpets.api.pet.action.ability.registry;
 
 import dev.smartshub.shpets.api.pet.action.ability.Ability;
+import dev.smartshub.shpets.api.pet.action.ability.impl.attack.*;
 import dev.smartshub.shpets.api.pet.action.ability.impl.basic.*;
 import dev.smartshub.shpets.api.pet.action.ability.impl.hook.EDToolsBoosAbility;
 import org.bukkit.configuration.ConfigurationSection;
@@ -22,7 +23,25 @@ public class AbilityRegistry {
         register("effect", EffectAbility::fromConfig);
         register("particle", ParticleAbility::fromConfig);
         register("glow", GlowAbility::fromConfig);
+        // Hook
         register("ed-tools-boost", EDToolsBoosAbility::fromConfig);
+
+        // Attacks
+        register("crystal-shard", CrystalShardAbility::fromConfig);
+        register("explosion-attack", ExplosionAttackAbility::fromConfig);
+        register("fireball-attack", FireballAttackAbility::fromConfig);
+        register("fire-blast", FireBlastAbility::fromConfig);
+        register("frost-attack", FrostAttackAbility::fromConfig);
+        register("healing-aura", HealingAuraAbility::fromConfig);
+        register("ice-beam-attack", IceBeamAttackAbility::fromConfig);
+        register("lightning-strike", LightningStrikeAbility::fromConfig);
+        register("poison-spit", PoisonSpitAbility::fromConfig);
+        register("root-grab", RootGrabAbility::fromConfig);
+        register("slash-attack", SlashAttackAbility::fromConfig);
+        register("spin-attack", SpinAttackAbility::fromConfig);
+        register("thunder-strike", ThunderStrikeAbility::fromConfig);
+        register("wind-blast", WindBlastAbility::fromConfig);
+        register("wind-slash", WindSlashAbility::fromConfig);
     }
     
     public static void register(String key, AbilityFactory factory) {

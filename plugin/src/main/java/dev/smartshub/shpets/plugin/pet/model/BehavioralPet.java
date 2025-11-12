@@ -81,6 +81,11 @@ public class BehavioralPet implements Pet {
     }
 
     @Override
+    public void updateTo(Player player) {
+        packetPet.spawnFor(getLocation(), player);
+    }
+
+    @Override
     public void performPeriodic() {
         if (data.getState() != PetState.SPAWNED) return;
 

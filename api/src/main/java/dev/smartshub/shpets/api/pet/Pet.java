@@ -21,6 +21,8 @@ public interface Pet {
      */
     void tick();
 
+    void updateTo(Player player);
+
     /**
      * Executes periodic actions based on configuration
      */
