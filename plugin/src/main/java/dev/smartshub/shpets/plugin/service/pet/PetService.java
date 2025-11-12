@@ -91,6 +91,13 @@ public class PetService {
         }
     }
 
+    public void performOnAttack(UUID owner, UUID target) {
+        List<Pet> pets = getPetsByOwner(owner);
+        for (Pet pet : pets) {
+            pet.getData().getTemplate().actions().get(TriggerType.ON_ATTACK).execute(pet.getData(), pet.getData().getOwner());
+        }
+    }
+
     /**
      * Checks if a template exists
      */

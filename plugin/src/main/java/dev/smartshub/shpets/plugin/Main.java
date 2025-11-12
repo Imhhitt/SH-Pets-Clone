@@ -9,10 +9,7 @@ import dev.smartshub.shpets.api.service.boost.RivalBoostService;
 import dev.smartshub.shpets.plugin.command.PetCommand;
 import dev.smartshub.shpets.plugin.command.handler.exception.ExceptionHandler;
 import dev.smartshub.shpets.plugin.command.handler.parameter.PetParameterType;
-import dev.smartshub.shpets.plugin.listener.PetGlowListener;
-import dev.smartshub.shpets.plugin.listener.PlayerJoinListener;
-import dev.smartshub.shpets.plugin.listener.PlayerQuitListener;
-import dev.smartshub.shpets.plugin.listener.RivalBoostListener;
+import dev.smartshub.shpets.plugin.listener.*;
 import dev.smartshub.shpets.plugin.message.MessageParser;
 import dev.smartshub.shpets.plugin.message.MessageRepository;
 import dev.smartshub.shpets.plugin.packet.PacketHandlerImpl;
@@ -116,6 +113,8 @@ public class Main extends JavaPlugin {
         pm.registerEvents(new PlayerJoinListener(packetHandler), this);
         pm.registerEvents(new PlayerQuitListener(packetHandler), this);
         pm.registerEvents(new PetGlowListener(glowHandlingService), this);
+        pm.registerEvents(new PlayerHurtListener(petService), this);
+        pm.registerEvents(new PlayerAttackListener(petService), this);
         pm.registerEvents(new RivalBoostListener(), this);
     }
 

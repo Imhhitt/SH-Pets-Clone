@@ -5,5 +5,6 @@ public enum TriggerType {
     ON_DESPAWN,
     PERIODIC,
     ON_INTERACT,
-    ON_HURT
+    ON_HURT,
+    ON_ATTACK
 }

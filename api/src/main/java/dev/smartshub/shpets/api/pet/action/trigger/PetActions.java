@@ -8,7 +8,8 @@ public record PetActions(
         @NotNull PetAction periodic,
         int periodicDelay,
         @NotNull PetAction interact,
-        @NotNull PetAction hurt
+        @NotNull PetAction hurt,
+        @NotNull PetAction attack
 ) {
 
     public PetAction get(final TriggerType type) {
@@ -18,6 +19,7 @@ public record PetActions(
             case PERIODIC -> periodic;
             case ON_INTERACT -> interact;
             case ON_HURT -> hurt;
+            case ON_ATTACK -> attack;
         };
     }
 }
