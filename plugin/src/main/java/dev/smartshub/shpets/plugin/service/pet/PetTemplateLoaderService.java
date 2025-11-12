@@ -242,6 +242,7 @@ public class PetTemplateLoaderService {
         PetAction onDespawn = loadPetActionFromSection(config.getConfigurationSection("on-despawn"));
         PetAction onHurt = loadPetActionFromSection(config.getConfigurationSection("on-hurt"));
         PetAction onInteract = loadPetActionFromSection(config.getConfigurationSection("on-interact"));
+        PetAction onAttack = loadPetActionFromSection(config.getConfigurationSection("on-attack"));
 
         // Periodic
         ConfigurationSection periodicSection = config.getConfigurationSection("periodic");
@@ -253,7 +254,7 @@ public class PetTemplateLoaderService {
 
         PetAction periodic = loadPetActionFromSection(periodicSection);
 
-        return new PetActions(onSpawn, onDespawn, periodic, periodicDelay, onInteract, onHurt);
+        return new PetActions(onSpawn, onDespawn, periodic, periodicDelay, onInteract, onHurt, onAttack);
     }
 
     /**
