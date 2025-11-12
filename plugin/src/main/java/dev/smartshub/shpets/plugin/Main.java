@@ -72,7 +72,7 @@ public class Main extends JavaPlugin {
         registerCommands();
         initAPI();
 
-        demo();
+        //demo();
     }
 
     private void initRegistries() {

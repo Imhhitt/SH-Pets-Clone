@@ -15,7 +15,7 @@ public class PlayerJoinListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerJoun(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         packetHandler.inject(event.getPlayer());
 
         PetsAPI.getInstance().petInstanceRegistry().getAll().forEach(pet -> {
