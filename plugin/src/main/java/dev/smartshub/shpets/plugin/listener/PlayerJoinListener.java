@@ -19,10 +19,17 @@ public class PlayerJoinListener implements Listener {
         packetHandler.inject(event.getPlayer());
 
         PetsAPI.getInstance().petInstanceRegistry().getAll().forEach(pet -> {
-            var petWorld = pet.getData().getOwner().getWorld().getName();
-            var world = event.getPlayer().getWorld().getName();
-            if (!petWorld.equals(world)) return;
-            pet.updateTo(event.getPlayer());
+            if (!pet.isSpawned()) return;
+
+            var owner = pet.getData().getOwner();
+            if (owner == null || !owner.isOnline()) return;
+
+            var petWorld = owner.getWorld().getName();
+            var playerWorld = event.getPlayer().getWorld().getName();
+
+            if (petWorld.equals(playerWorld)) {
+                pet.updateTo(event.getPlayer());
+            }
         });
     }
 

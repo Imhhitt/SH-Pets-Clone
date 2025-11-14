@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.CraftWorld;
@@ -90,14 +89,41 @@ public class PacketPet {
             }
         }
 
-        // Armor stands show arms
+        // Armor stands configuration
         if (entity instanceof ArmorStand armorStand) {
             armorStand.setNoBasePlate(true);
             boolean showArms = petData.getTemplate().appearance().equipment().showArms();
             armorStand.setShowArms(showArms);
             armorStand.setSmall(petData.getTemplate().entityData().baby());
-        }
 
+            // FIX: Always hide the body when showing arms, and make it invisible
+            if (showArms) {
+                armorStand.setInvisible(true);
+                hideArmorStandBody(armorStand);
+            }
+        }
+    }
+
+    private void hideArmorStandBody(ArmorStand armorStand) {
+        try {
+            var entityData = armorStand.getEntityData();
+            var dataAccessor = ArmorStand.DATA_CLIENT_FLAGS;
+            byte currentFlags = entityData.get(dataAccessor);
+
+            // Bit flags del ArmorStand:
+            // 0x01 = isSmall
+            // 0x02 = hasArms
+            // 0x04 = noBasePlate
+            // 0x08 = setMarker (hace que sea más pequeño y sin hitbox)
+            // 0x10 = hideBody (oculta el cuerpo/tronco)
+
+            // FIX: Aplicar tanto MARKER como HIDE_BODY para ocultar completamente el cuerpo
+            byte newFlags = (byte) (currentFlags | 0x08 | 0x10);
+            entityData.set(dataAccessor, newFlags);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

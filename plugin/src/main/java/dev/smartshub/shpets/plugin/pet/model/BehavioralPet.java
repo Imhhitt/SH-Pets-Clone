@@ -13,10 +13,6 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-/**
- * High-level pet implementation that handles behavior logic.
- * Wraps PacketPet for rendering and delegates behavioral logic.
- */
 public class BehavioralPet implements Pet {
 
     private final PacketPet packetPet;
@@ -82,7 +78,12 @@ public class BehavioralPet implements Pet {
 
     @Override
     public void updateTo(Player player) {
-        packetPet.spawnFor(getLocation(), player);
+        if (data.getState() != PetState.SPAWNED) return;
+
+        Location location = getLocation();
+        if (location == null) return;
+
+        packetPet.spawnFor(location, player);
     }
 
     @Override

@@ -1,9 +1,9 @@
 name: SH-Pets
 main: dev.smartshub.shpets.plugin.Main
-version: 1.0.0
+version: $version
 authors:
   - hhitt, SmartsHub
-description: "Awesome pets for you server"
+description: "Stylish companions with real perks. Keep your players entertained and your server thriving."
 api-version: 1.21
 
 softdepend:
