@@ -64,7 +64,7 @@ public class ExplosionAttackAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static ExplosionAttackAbility fromConfig(ConfigurationSection section) {

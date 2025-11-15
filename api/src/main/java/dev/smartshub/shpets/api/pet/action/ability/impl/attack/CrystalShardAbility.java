@@ -61,7 +61,7 @@ public class CrystalShardAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static CrystalShardAbility fromConfig(ConfigurationSection section) {

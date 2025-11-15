@@ -78,7 +78,6 @@ public class BehavioralPet implements Pet {
 
     @Override
     public void updateTo(Player player) {
-        if (data.getState() != PetState.SPAWNED) return;
 
         Location location = getLocation();
         if (location == null) return;

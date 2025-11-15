@@ -69,7 +69,7 @@ public class RootGrabAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static RootGrabAbility fromConfig(ConfigurationSection section) {

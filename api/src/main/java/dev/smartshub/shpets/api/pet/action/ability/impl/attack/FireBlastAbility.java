@@ -62,7 +62,7 @@ public class FireBlastAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static FireBlastAbility fromConfig(ConfigurationSection section) {

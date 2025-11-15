@@ -42,7 +42,7 @@ public class PacketHandlerImpl implements PacketHandler {
                         var bukkitEntity = nmsEntity.getBukkitEntity();
 
                         petService.performInteraction(bukkitEntity.getUniqueId(), player.getUniqueId());
-                    }, 0L);
+                    }, 1L);
                 }
 
                 super.channelRead(ctx, rawPacket);

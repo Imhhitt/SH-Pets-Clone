@@ -78,7 +78,7 @@ public class IceBeamAttackAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static IceBeamAttackAbility fromConfig(ConfigurationSection section) {

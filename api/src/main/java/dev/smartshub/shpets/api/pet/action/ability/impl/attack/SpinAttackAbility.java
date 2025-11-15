@@ -71,7 +71,7 @@ public class SpinAttackAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static SpinAttackAbility fromConfig(ConfigurationSection section) {

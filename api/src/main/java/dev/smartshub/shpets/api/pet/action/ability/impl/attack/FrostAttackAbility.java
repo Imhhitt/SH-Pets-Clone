@@ -64,7 +64,7 @@ public class FrostAttackAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static FrostAttackAbility fromConfig(ConfigurationSection section) {

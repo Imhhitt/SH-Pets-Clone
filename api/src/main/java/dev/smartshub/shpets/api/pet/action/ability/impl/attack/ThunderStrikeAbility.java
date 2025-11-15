@@ -64,7 +64,7 @@ public class ThunderStrikeAbility extends PetAbility {
             }
 
             return true;
-        }, 0L, 1L);
+        }, 1L, 1L);
     }
 
     public static ThunderStrikeAbility fromConfig(ConfigurationSection section) {
