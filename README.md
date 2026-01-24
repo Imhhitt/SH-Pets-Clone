@@ -1,5 +1,7 @@
 # 🎥 Preview Video
-[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=mHI6oT_Jg44)
+[![Showcase #1](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=mHI6oT_Jg44)
+
+[![Showcase #2](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://youtu.be/JZ8ud_ggpS4)
 
 
 
