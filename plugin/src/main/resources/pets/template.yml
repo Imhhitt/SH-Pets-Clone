@@ -144,7 +144,14 @@ on-spawn:
   # ========================================
   # PERIODIC ACTIONS
   # ========================================
+# Le cura 2 de vida cada 10 segundos si tiene menos de 12 de vida
 periodic:
+  delay: 200 # Cada 10 segundos
+  heal-on-spawn:
+    condition: "%player_health% < 12.0"
+    heal:
+      type: ADD
+      value: 2.0
     # ========== PARTICLE TRAIL ==========
   flame-trail:
     condition: "%world_time% > 13000" # Solo de noche
