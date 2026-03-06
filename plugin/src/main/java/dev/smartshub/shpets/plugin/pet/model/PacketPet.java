@@ -296,8 +296,7 @@ public class PacketPet {
                 nmsEntity,
                 0,
                 false,
-                ignored -> {},
-                (packet, uuid) -> {},
+                null,
                 Collections.emptySet()
         );
 
